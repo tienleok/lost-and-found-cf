@@ -29,6 +29,16 @@ Resources:
       VpcId: !Ref VPC
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
+  PublicSubnetThree:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select 
+        - 2
+        - !GetAZs 
+          Ref: 'AWS::Region'
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: true
   InternetGateway:
     Type: 'AWS::EC2::InternetGateway'
   GatewayAttachement:
@@ -49,6 +59,11 @@ Resources:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PublicSubnetTwo
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetThreeRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetThree
       RouteTableId: !Ref PublicRouteTable
   PublicRoute:
     Type: 'AWS::EC2::Route'
@@ -72,6 +87,7 @@ Resources:
       Subnets:
         - !Ref PublicSubnetOne
         - !Ref PublicSubnetTwo
+        - !Ref PublicSubnetThree
       SecurityGroups:
         - !Ref PublicLoadBalancerSecurityGroup
   DummyTargetGroupPublic:
@@ -249,6 +265,14 @@ Outputs:
         - ':'
         - - !Ref 'AWS::StackName'
           - PublicSubnetTwo
+  PublicSubnetThree:
+    Description: Public subnet three
+    Value: !Ref PublicSubnetThree
+    Export:
+      Name: !Join 
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - PublicSubnetThree
   ECSSecurityGroup:
     Description: A security group used to allow ECS containers to receive traffic
     Value: !Ref ECSSecurityGroup
