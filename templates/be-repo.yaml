@@ -1,0 +1,32 @@
+Resources:
+  BERepo: 
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: "be-repo"
+      ImageScanningConfiguration: 
+        ScanOnPush: "true"            
+      RepositoryPolicyText: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Sid: AllowPushPull
+            Effect: Allow
+            Principal: 
+              AWS: 
+                - "arn:aws:iam::441184683115:user/TamAdmin"
+                - "arn:aws:iam::441184683115:user/Thiru"
+                - "arn:aws:iam::441184683115:user/TienAdmin"
+                - "arn:aws:iam::441184683115:user/TingPeng"
+            Action: 
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
+
+Outputs:    
+  Arn:
+    Value: !GetAtt BERepo.Arn
+
